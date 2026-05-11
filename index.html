@@ -659,14 +659,14 @@ async function fetchData(){
       document.getElementById('td-dir').textContent=isBull?'↑ BUY (Long)':'↓ SELL (Short)';
       document.getElementById('td-dir').className='trade-val '+r.mainCls;
       document.getElementById('td-entry').textContent=e1+' – '+e2;
-      document.getElementById('td-tp1').textContent=fmt(isBull?r.cp+tp1:r.cp-tp1)+' (+'+(tp1/r.cp*100).toFixed(2)+'%)';
-      document.getElementById('td-tp2').textContent=fmt(isBull?r.cp+tp2:r.cp-tp2)+' (+'+(tp2/r.cp*100).toFixed(2)+'%)';
+      document.getElementById('td-tp1-scalp').textContent=fmt(isBull?r.cp+tp1:r.cp-tp1)+' (+'+(tp1/r.cp*100).toFixed(2)+'%)';
+      document.getElementById('td-tp2-scalp').textContent=fmt(isBull?r.cp+tp2:r.cp-tp2)+' (+'+(tp2/r.cp*100).toFixed(2)+'%)';
       document.getElementById('td-sl').textContent=fmt(isBull?r.cp-slDist:r.cp+slDist)+' (-'+(slDist/r.cp*100).toFixed(2)+'%)';
       document.getElementById('td-rr').textContent='1 : '+(tp1/slDist).toFixed(2);
     } else {
       tb.className='trade-box';badge.className='trade-badge neutral';badge.textContent='WAIT';
       document.getElementById('td-dir').textContent='No clear direction';
-      ['td-entry','td-tp1','td-tp2','td-sl','td-rr'].forEach(id=>document.getElementById(id).textContent='---');
+      ['td-entry','td-tp1-scalp','td-tp2-scalp','td-sl','td-rr'].forEach(id=>document.getElementById(id).textContent='---');
     }
     document.getElementById('btnPaperLong').disabled=r.mainCls!=='bull';
     document.getElementById('btnPaperShort').disabled=r.mainCls!=='bear';
