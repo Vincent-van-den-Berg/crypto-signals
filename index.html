@@ -85,6 +85,27 @@ select{background:var(--surface2);border:2px solid var(--border2);color:var(--te
 .tf-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .tf-rec{font-size:11px;font-weight:600;color:var(--neutral);margin-top:5px;font-family:'JetBrains Mono',monospace}
 .main{padding:14px 16px;display:flex;flex-direction:column;gap:12px;max-width:900px;margin:0 auto}
+.timing-panel{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.timing-panel.hot{border-color:#dc2626;background:linear-gradient(135deg,#fee2e2 0%,#fff 60%)}
+.timing-panel.warm{border-color:#d97706;background:linear-gradient(135deg,#fef3c7 0%,#fff 60%)}
+.timing-panel.ok{border-color:#0d9488;background:linear-gradient(135deg,#ccfbf1 0%,#fff 60%)}
+.timing-panel.cold{border-color:#64748b}
+.timing-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.timing-title{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.nz-clock{font-size:16px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text);text-align:right}
+.nz-clock-sub{font-size:10px;font-weight:600;color:var(--dim);font-family:'JetBrains Mono',monospace;text-align:right}
+.timing-status{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.status-emoji{font-size:32px;line-height:1}
+.status-main{font-size:18px;font-weight:900;line-height:1.1}
+.status-main.hot{color:#dc2626}
+.status-main.warm{color:#d97706}
+.status-main.ok{color:#0d9488}
+.status-main.cold{color:#64748b}
+.status-detail{font-size:13px;font-weight:600;color:var(--text2);margin-top:3px;line-height:1.4}
+.next-window{font-size:12px;font-weight:700;padding:8px 12px;background:var(--surface2);border-radius:8px;color:var(--text2);border-left:4px solid var(--border)}
+.next-window.hot{border-left-color:#dc2626}
+.next-window.warm{border-left-color:#d97706}
+.next-window.ok{border-left-color:#0d9488}
 .asset-info{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow)}
 .asset-info.gold{border-color:var(--c-gold);background:linear-gradient(90deg,#fef9c3,#fff)}
 .asset-info.silver{border-color:var(--c-silver);background:linear-gradient(90deg,#f1f5f9,#fff)}
@@ -98,21 +119,21 @@ select{background:var(--surface2);border:2px solid var(--border2);color:var(--te
 .volatility-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:4px}
 .volatility-badge.high{background:#fee2e2;color:#dc2626}
 .volatility-badge.medium{background:#fef3c7;color:#b45309}
-.sig-banner{border-radius:14px;padding:18px 20px;display:flex;align-items:flex-start;justify-content:space-between;border:2px solid var(--border);background:var(--surface);box-shadow:var(--shadow-lg);gap:14px}
+.sig-banner{border-radius:10px;padding:10px 14px;display:flex;align-items:flex-start;justify-content:space-between;border:2px solid var(--border);background:var(--surface);box-shadow:var(--shadow);gap:10px}
 .sig-banner.bull{border-color:var(--bull);background:var(--bull-bg)}
 .sig-banner.bear{border-color:var(--bear);background:var(--bear-bg)}
 .sig-banner.neutral{border-color:var(--neut-bdr);background:var(--neut-bg)}
-.sig-label{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px}
-.sig-value{font-size:36px;font-weight:900;line-height:1}
+.sig-label{font-size:9px;font-weight:700;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:2px}
+.sig-value{font-size:24px;font-weight:900;line-height:1}
 .sig-value.bull{color:var(--bull)}.sig-value.bear{color:var(--bear)}.sig-value.neutral{color:var(--neutral)}
-.sig-sub{font-size:13px;font-weight:600;color:var(--text2);margin-top:5px;line-height:1.4}
+.sig-sub{font-size:11px;font-weight:600;color:var(--text2);margin-top:3px;line-height:1.3}
 .sig-right{text-align:right;flex-shrink:0}
-.price-big{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text)}
-.price-chg{font-size:15px;font-weight:800;margin-top:3px}
+.price-big{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--text)}
+.price-chg{font-size:12px;font-weight:800;margin-top:2px}
 .price-chg.up{color:var(--bull)}.price-chg.down{color:var(--bear)}
-.last-update{font-size:11px;color:var(--dim);margin-top:4px;font-family:'JetBrains Mono',monospace}
-.paper-trade-bar{display:flex;gap:8px;margin-top:10px}
-.paper-trade-btn{flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;border:2px solid;font-family:'Inter',sans-serif}
+.last-update{font-size:9px;color:var(--dim);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.paper-trade-bar{display:flex;gap:6px;margin-top:6px}
+.paper-trade-btn{flex:1;padding:5px 8px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;border:2px solid;font-family:'Inter',sans-serif}
 .paper-trade-btn.long{background:var(--bull);color:#fff;border-color:var(--bull)}
 .paper-trade-btn.short{background:var(--bear);color:#fff;border-color:var(--bear)}
 .paper-trade-btn:disabled{opacity:.4;cursor:not-allowed;background:#cbd5e1!important;border-color:#94a3b8!important;color:#475569!important}
@@ -151,19 +172,19 @@ select{background:var(--surface2);border:2px solid var(--border2);color:var(--te
 .sc-sig{font-size:9.5px;font-weight:600;line-height:1.2;margin-top:1px}
 .sc-sig.bull{color:var(--bull)}.sc-sig.bear{color:var(--bear)}.sc-sig.neutral{color:var(--neutral)}.sc-sig.dim{color:var(--dim)}
 .sc-icon{font-size:13px;line-height:1;flex-shrink:0}
-.trade-box{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow-lg)}
+.trade-box{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:8px 12px;box-shadow:var(--shadow)}
 .trade-box.bull{border-color:var(--bull);background:var(--bull-bg)}
 .trade-box.bear{border-color:var(--bear);background:var(--bear-bg)}
-.trade-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.trade-title{font-size:12px;font-weight:700;color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
-.trade-badge{font-size:14px;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:1px}
+.trade-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.trade-title{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.trade-badge{font-size:11px;font-weight:800;padding:2px 10px;border-radius:14px;letter-spacing:.5px}
 .trade-badge.bull{background:var(--bull);color:#fff}
 .trade-badge.bear{background:var(--bear);color:#fff}
-.trade-badge.neutral{background:var(--neut-bg);color:var(--neutral);border:2px solid var(--neut-bdr)}
-.trade-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.07)}
+.trade-badge.neutral{background:var(--neut-bg);color:var(--neutral);border:1.5px solid var(--neut-bdr)}
+.trade-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.06)}
 .trade-row:last-child{border:none;padding-bottom:0}
-.trade-key{font-size:14px;font-weight:600;color:var(--text2)}
-.trade-val{font-size:16px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.trade-key{font-size:11px;font-weight:600;color:var(--text2)}
+.trade-val{font-size:12px;font-weight:800;font-family:'JetBrains Mono',monospace}
 .trade-val.entry{color:var(--accent)}
 .trade-val.tp{color:var(--bull)}
 .trade-val.sl{color:var(--bear)}
@@ -351,6 +372,28 @@ canvas{display:block;width:100%;border-radius:6px}
 </div>
 
 <div class="main">
+  <!-- NZ TIMING PANEL -->
+  <div class="timing-panel" id="timingPanel">
+    <div class="timing-head">
+      <div>
+        <div class="timing-title">🕐 Best Trading Time (NZ)</div>
+        <div class="status-detail" id="timingTip" style="margin-top:4px">Loading...</div>
+      </div>
+      <div>
+        <div class="nz-clock" id="nzClock">--:--</div>
+        <div class="nz-clock-sub" id="nzZone">NZST</div>
+      </div>
+    </div>
+    <div class="timing-status">
+      <div class="status-emoji" id="statusEmoji">⏳</div>
+      <div>
+        <div class="status-main" id="statusMain">Checking...</div>
+        <div class="status-detail" id="statusDetail">Loading sessions...</div>
+      </div>
+    </div>
+    <div class="next-window" id="nextWindow">Calculating...</div>
+  </div>
+
   <div class="asset-info" id="assetInfo">
     <div><div class="asset-name" id="assetName">XRP / USD</div><div class="asset-desc" id="assetDesc">Cryptocurrency</div></div>
     <div class="asset-tag crypto" id="assetTag">CRYPTO</div>
@@ -702,6 +745,110 @@ const PRIME_HOURS = {
   energy: {primeStart:13, primeEnd:18, goodStart:7, goodEnd:21},
   base: {primeStart:8, primeEnd:17, goodStart:1, goodEnd:18}
 };
+
+// Trading session metadata for the NZ timing panel
+const TRADING_NOTES = {
+  crypto: 'Crypto is most volatile during London/NY overlap (01:00–05:00 NZ). Avoid late NZ afternoons (Asia quiet).',
+  gold: 'Gold pivots on London fix (20:30 / 03:00 NZ) and US data at 00:30 NZ.',
+  silver: 'Silver more volatile than gold — bigger moves during London/NY overlap (01:00–05:00 NZ).',
+  pgm: 'PGM metals (Pt/Pd) are illiquid outside London/NY hours — avoid NZ daytime.',
+  energy: '⚠️ EIA Oil Inventory: Wednesdays 02:30 NZ. EIA Natural Gas: Thursdays 02:30 NZ. Huge moves!',
+  base: 'Copper trades on China demand — Shanghai session matters (NZ morning).'
+};
+
+// NZ time utilities
+function getNZOffset(){
+  // NZDT (UTC+13): last Sun Sept → first Sun April
+  // NZST (UTC+12): rest of year
+  const now=new Date();
+  const y=now.getUTCFullYear();
+  const sept=new Date(Date.UTC(y,8,30));
+  while(sept.getUTCDay()!==0)sept.setUTCDate(sept.getUTCDate()-1);
+  sept.setUTCHours(14,0,0,0);
+  const apr=new Date(Date.UTC(y,3,1));
+  while(apr.getUTCDay()!==0)apr.setUTCDate(apr.getUTCDate()+1);
+  apr.setUTCHours(14,0,0,0);
+  let dstStart, dstEnd;
+  if(now<apr){
+    dstStart=new Date(Date.UTC(y-1,8,30));
+    while(dstStart.getUTCDay()!==0)dstStart.setUTCDate(dstStart.getUTCDate()-1);
+    dstStart.setUTCHours(14,0,0,0);
+    dstEnd=apr;
+  } else {
+    dstStart=sept;
+    dstEnd=new Date(Date.UTC(y+1,3,1));
+    while(dstEnd.getUTCDay()!==0)dstEnd.setUTCDate(dstEnd.getUTCDate()+1);
+    dstEnd.setUTCHours(14,0,0,0);
+  }
+  const isDST = now>=dstStart && now<dstEnd;
+  return { offset: isDST?13:12, name: isDST?'NZDT':'NZST' };
+}
+
+function fmtNZTime(decHour){
+  let h=Math.floor(decHour)%24;
+  let m=Math.round((decHour-Math.floor(decHour))*60);
+  if(m===60){m=0;h++;}
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+function updateTimingPanel(){
+  const {offset, name} = getNZOffset();
+  const utc = new Date();
+  const nz = new Date(utc.getTime() + offset*3600000);
+  const nzHour = nz.getUTCHours() + nz.getUTCMinutes()/60;
+  const nzDay = nz.getUTCDay(); // 0=Sun, 6=Sat
+  
+  // Clock + timezone
+  document.getElementById('nzClock').textContent = fmtNZTime(nzHour);
+  document.getElementById('nzZone').textContent = `${name} (UTC+${offset})`;
+  document.getElementById('timingTip').textContent = TRADING_NOTES[currentCategory] || '';
+  
+  // Determine status
+  const cfg = PRIME_HOURS[currentCategory];
+  if(!cfg){ return; }
+  const utcHour = utc.getUTCHours() + utc.getUTCMinutes()/60;
+  const inWin = (s,e,h) => s<=e ? (h>=s && h<e) : (h>=s || h<e);
+  const inPrime = inWin(cfg.primeStart, cfg.primeEnd, utcHour);
+  const inGood = inWin(cfg.goodStart, cfg.goodEnd, utcHour);
+  
+  // Weekend check for commodities
+  const isWeekend = (nzDay===6 || nzDay===0);
+  const isCommodity = currentCategory !== 'crypto';
+  
+  let emoji, mainText, detail, cls;
+  if(isWeekend && isCommodity){
+    emoji='💤'; mainText='WEEKEND'; cls='cold';
+    detail='Commodity markets closed — wait for Monday';
+  } else if(inPrime){
+    emoji='🔥'; mainText='PRIME TIME'; cls='hot';
+    detail='High liquidity right now — best for trading';
+  } else if(inGood){
+    emoji='✅'; mainText='GOOD TIME'; cls='warm';
+    detail='Decent activity — tradeable';
+  } else {
+    emoji='💤'; mainText='AVOID'; cls='cold';
+    detail='Low liquidity — wide spreads, choppy moves';
+  }
+  
+  document.getElementById('statusEmoji').textContent = emoji;
+  const sm = document.getElementById('statusMain');
+  sm.textContent = mainText; sm.className = `status-main ${cls}`;
+  document.getElementById('statusDetail').textContent = detail;
+  document.getElementById('timingPanel').className = `timing-panel ${cls}`;
+  
+  // Next prime window (in NZ time)
+  const nzPrimeStart = (cfg.primeStart + offset) % 24;
+  const nzPrimeEnd = (cfg.primeEnd + offset) % 24;
+  let nextMsg;
+  if(inPrime){
+    nextMsg = `✅ Currently in prime window (until ${fmtNZTime(nzPrimeEnd)} NZ)`;
+  } else {
+    let hoursTo = (cfg.primeStart - utcHour + 24) % 24;
+    nextMsg = `⏰ Next prime window: ${fmtNZTime(nzPrimeStart)} NZ (in ${hoursTo.toFixed(1)}h)`;
+  }
+  const nw = document.getElementById('nextWindow');
+  nw.textContent = nextMsg; nw.className = `next-window ${cls}`;
+}
 
 function checkPrimeHours(category){
   const cfg = PRIME_HOURS[category];
@@ -1122,7 +1269,7 @@ function setCategory(cat,btn){
   info.className='asset-info '+ASSET_CATEGORIES[cat].cls;
   tag.className='asset-tag '+ASSET_CATEGORIES[cat].cls;
   tag.textContent=ASSET_CATEGORIES[cat].tag;
-  updateAssetInfo();lastSig='';fetchData();
+  updateAssetInfo();updateTimingPanel();lastSig='';fetchData();
 }
 
 function updateAssetInfo(){
@@ -1173,7 +1320,9 @@ function startScanner(){
 if('Notification' in window && Notification.permission==='default'){Notification.requestPermission();}
 
 initPairs();
-addLog('ALERT','CryptoSignal PRO v6 — Paper Trading + MTF Scanner active');
+updateTimingPanel();
+setInterval(updateTimingPanel, 30000); // refresh clock every 30s
+addLog('ALERT','CryptoSignal PRO v7 — Paper Trading + MTF Scanner + Quality Gates active');
 addLog('SCAN','Scanning every 2 min · alerts on 3+ TFs agreeing on STRONG signal');
 renderTrades();updatePaperStats();
 fetchData();
