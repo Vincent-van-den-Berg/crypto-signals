@@ -125,18 +125,32 @@ select{background:var(--surface2);border:2px solid var(--border2);color:var(--te
 .conf-fill{height:100%;border-radius:7px;transition:width .7s,background .4s}
 .conf-zones{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;font-weight:700;color:var(--dim);font-family:'JetBrains Mono',monospace}
 .conf-agree{font-size:14px;font-weight:700;color:var(--text2);margin-top:8px;text-align:center}
-.strat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.sc{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);position:relative}
+.strat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.qgate-panel{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:8px 12px;box-shadow:var(--shadow)}
+.qgate-title{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.qgate-summary{font-size:13px;font-weight:900;color:var(--text);font-family:'JetBrains Mono',monospace}
+.qgate-summary.pass{color:var(--bull)}
+.qgate-summary.partial{color:var(--neutral)}
+.qgate-summary.fail{color:var(--bear)}
+.qgate-row{display:flex;flex-wrap:wrap;gap:4px}
+.qgate-chip{font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0}
+.qgate-chip.pass{background:var(--bull-bg);color:var(--bull);border-color:var(--bull)}
+.qgate-chip.fail{background:var(--bear-bg);color:var(--bear);border-color:var(--bear)}
+.qgate-chip.pass::before{content:'✓ '}
+.qgate-chip.fail::before{content:'✗ '}
+@media (max-width:600px){.strat-grid{grid-template-columns:1fr 1fr;gap:5px}}
+.sc{background:var(--surface);border:2px solid var(--border);border-radius:8px;padding:6px 8px 6px 10px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column;gap:1px;min-height:0}
 .sc.bull{border-color:var(--bull);background:var(--bull-bg)}
 .sc.bear{border-color:var(--bear);background:var(--bear-bg)}
 .sc.neutral{border-color:var(--neut-bdr);background:var(--neut-bg)}
-.sc.priority::before{content:'★';position:absolute;left:-1px;top:-1px;background:var(--gold);color:#fff;font-size:11px;font-weight:900;padding:2px 6px;border-radius:8px 0 8px 0}
-.sc-name{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px}
-.sc.priority .sc-name{padding-left:18px}
-.sc-val{font-size:22px;font-weight:900;color:var(--text);font-family:'JetBrains Mono',monospace}
-.sc-sig{font-size:12px;font-weight:700;margin-top:3px}
+.sc.priority{padding-left:14px}
+.sc.priority::before{content:'★';position:absolute;left:-1px;top:-1px;background:var(--gold);color:#fff;font-size:8px;font-weight:900;padding:1px 4px;border-radius:6px 0 6px 0;line-height:1}
+.sc-name{font-size:9px;font-weight:700;color:var(--dim);letter-spacing:.8px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;line-height:1.1}
+.sc-row{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.sc-val{font-size:14px;font-weight:900;color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1.1}
+.sc-sig{font-size:9.5px;font-weight:600;line-height:1.2;margin-top:1px}
 .sc-sig.bull{color:var(--bull)}.sc-sig.bear{color:var(--bear)}.sc-sig.neutral{color:var(--neutral)}.sc-sig.dim{color:var(--dim)}
-.sc-icon{position:absolute;right:12px;top:12px;font-size:18px}
+.sc-icon{font-size:13px;line-height:1;flex-shrink:0}
 .trade-box{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow-lg)}
 .trade-box.bull{border-color:var(--bull);background:var(--bull-bg)}
 .trade-box.bear{border-color:var(--bear);background:var(--bear-bg)}
@@ -366,16 +380,29 @@ canvas{display:block;width:100%;border-radius:6px}
     <div class="conf-agree" id="confAgree">Analysing...</div>
   </div>
 
+  <!-- QUALITY GATE STATUS -->
+  <div class="qgate-panel" id="qgatePanel">
+    <div class="qgate-title">🛡️ Quality Gates <span class="qgate-summary" id="qgateSummary">--/6</span></div>
+    <div class="qgate-row">
+      <span class="qgate-chip" id="qg-strong">STRONG</span>
+      <span class="qgate-chip" id="qg-rr">R:R 1.5+</span>
+      <span class="qgate-chip" id="qg-conf">CONF 80+</span>
+      <span class="qgate-chip" id="qg-agree">7/9 AGREE</span>
+      <span class="qgate-chip" id="qg-trend">H1 TREND</span>
+      <span class="qgate-chip" id="qg-hours">HOURS</span>
+    </div>
+  </div>
+
   <div class="strat-grid">
-    <div class="sc priority" id="sc-vwap"><div class="sc-name">VWAP</div><div class="sc-val" id="sv-vwap">---</div><div class="sc-sig dim" id="ss-vwap">Loading</div><span class="sc-icon" id="si-vwap">⏳</span></div>
-    <div class="sc priority" id="sc-ema"><div class="sc-name">EMA RIBBON</div><div class="sc-val" id="sv-ema">---</div><div class="sc-sig dim" id="ss-ema">Loading</div><span class="sc-icon" id="si-ema">⏳</span></div>
-    <div class="sc" id="sc-macd"><div class="sc-name">MACD HIST</div><div class="sc-val" id="sv-macd">---</div><div class="sc-sig dim" id="ss-macd">Loading</div><span class="sc-icon" id="si-macd">⏳</span></div>
-    <div class="sc" id="sc-rsi"><div class="sc-name">RSI</div><div class="sc-val" id="sv-rsi">---</div><div class="sc-sig dim" id="ss-rsi">Loading</div><span class="sc-icon" id="si-rsi">⏳</span></div>
-    <div class="sc" id="sc-stochrsi"><div class="sc-name">STOCH RSI</div><div class="sc-val" id="sv-stochrsi">---</div><div class="sc-sig dim" id="ss-stochrsi">Loading</div><span class="sc-icon" id="si-stochrsi">⏳</span></div>
-    <div class="sc" id="sc-bb"><div class="sc-name">BOLLINGER</div><div class="sc-val" id="sv-bb">---</div><div class="sc-sig dim" id="ss-bb">Loading</div><span class="sc-icon" id="si-bb">⏳</span></div>
-    <div class="sc priority" id="sc-volume"><div class="sc-name">VOLUME</div><div class="sc-val" id="sv-volume">---</div><div class="sc-sig dim" id="ss-volume">Loading</div><span class="sc-icon" id="si-volume">⏳</span></div>
-    <div class="sc" id="sc-obv"><div class="sc-name">OBV DIV</div><div class="sc-val" id="sv-obv">---</div><div class="sc-sig dim" id="ss-obv">Loading</div><span class="sc-icon" id="si-obv">⏳</span></div>
-    <div class="sc" id="sc-mom"><div class="sc-name">MOMENTUM</div><div class="sc-val" id="sv-mom">---</div><div class="sc-sig dim" id="ss-mom">Loading</div><span class="sc-icon" id="si-mom">⏳</span></div>
+    <div class="sc priority" id="sc-vwap"><div class="sc-name">VWAP</div><div class="sc-row"><div class="sc-val" id="sv-vwap">---</div><span class="sc-icon" id="si-vwap">⏳</span></div><div class="sc-sig dim" id="ss-vwap">Loading</div></div>
+    <div class="sc priority" id="sc-ema"><div class="sc-name">EMA RIBBON</div><div class="sc-row"><div class="sc-val" id="sv-ema">---</div><span class="sc-icon" id="si-ema">⏳</span></div><div class="sc-sig dim" id="ss-ema">Loading</div></div>
+    <div class="sc" id="sc-macd"><div class="sc-name">MACD HIST</div><div class="sc-row"><div class="sc-val" id="sv-macd">---</div><span class="sc-icon" id="si-macd">⏳</span></div><div class="sc-sig dim" id="ss-macd">Loading</div></div>
+    <div class="sc" id="sc-rsi"><div class="sc-name">RSI</div><div class="sc-row"><div class="sc-val" id="sv-rsi">---</div><span class="sc-icon" id="si-rsi">⏳</span></div><div class="sc-sig dim" id="ss-rsi">Loading</div></div>
+    <div class="sc" id="sc-stochrsi"><div class="sc-name">STOCH RSI</div><div class="sc-row"><div class="sc-val" id="sv-stochrsi">---</div><span class="sc-icon" id="si-stochrsi">⏳</span></div><div class="sc-sig dim" id="ss-stochrsi">Loading</div></div>
+    <div class="sc" id="sc-bb"><div class="sc-name">BOLLINGER</div><div class="sc-row"><div class="sc-val" id="sv-bb">---</div><span class="sc-icon" id="si-bb">⏳</span></div><div class="sc-sig dim" id="ss-bb">Loading</div></div>
+    <div class="sc priority" id="sc-volume"><div class="sc-name">VOLUME</div><div class="sc-row"><div class="sc-val" id="sv-volume">---</div><span class="sc-icon" id="si-volume">⏳</span></div><div class="sc-sig dim" id="ss-volume">Loading</div></div>
+    <div class="sc" id="sc-obv"><div class="sc-name">OBV DIV</div><div class="sc-row"><div class="sc-val" id="sv-obv">---</div><span class="sc-icon" id="si-obv">⏳</span></div><div class="sc-sig dim" id="ss-obv">Loading</div></div>
+    <div class="sc" id="sc-mom"><div class="sc-name">MOMENTUM</div><div class="sc-row"><div class="sc-val" id="sv-mom">---</div><span class="sc-icon" id="si-mom">⏳</span></div><div class="sc-sig dim" id="ss-mom">Loading</div></div>
   </div>
 
   <div class="trade-box" id="tradeBox">
@@ -389,8 +416,8 @@ canvas{display:block;width:100%;border-radius:6px}
       <div class="tp-card tp2"><div class="tp-label">TP2 (6%)</div><div class="tp-pct" id="td-tp2pct">+6.0%</div><div class="tp-price" id="td-tp2">---</div></div>
       <div class="tp-card tp3"><div class="tp-label">TP3 (10%)</div><div class="tp-pct" id="td-tp3pct">+10%</div><div class="tp-price" id="td-tp3">---</div></div>
     </div>
-    <div class="trade-row" id="scalpTp1Row"><span class="trade-key">TP1 (1.5×ATR)</span><span class="trade-val tp" id="td-tp1-scalp">---</span></div>
-    <div class="trade-row" id="scalpTp2Row"><span class="trade-key">TP2 (3×ATR)</span><span class="trade-val tp" id="td-tp2-scalp">---</span></div>
+    <div class="trade-row" id="scalpTp1Row"><span class="trade-key">TP1 (R:R 1:2.5)</span><span class="trade-val tp" id="td-tp1-scalp">---</span></div>
+    <div class="trade-row" id="scalpTp2Row"><span class="trade-key">TP2 (R:R 1:4.0)</span><span class="trade-val tp" id="td-tp2-scalp">---</span></div>
   </div>
 
   <div class="chart-wrap">
@@ -624,6 +651,91 @@ function setCard(id,val,sig,cls){
   document.getElementById('si-'+id).textContent=icons[cls]||'🔵';
 }
 
+// ═══════════════════════════════════════════════════════════
+// QUALITY GATE HELPERS (Option A + B)
+// ═══════════════════════════════════════════════════════════
+let lastQualityEval = null;
+const h1TrendCache = {}; // sym -> {trend, ts}
+const H1_TREND_TTL = 300000; // 5 min
+
+async function getH1TrendCached(symbol, useFutures){
+  const now = Date.now();
+  const cached = h1TrendCache[symbol];
+  if(cached && (now - cached.ts) < H1_TREND_TTL){
+    return cached;
+  }
+  try{
+    const candles = await EXCHANGES[currentExchange].fetchKlines(symbol, '1h', useFutures);
+    if(candles.length < 60){
+      const r = {trend:'unknown', ts:now};
+      h1TrendCache[symbol] = r;
+      return r;
+    }
+    const closes = candles.map(c=>c.c);
+    const cp = closes[closes.length-1];
+    const ema50 = ema(closes, 50);
+    const v50 = ema50[ema50.length-1];
+    const v50_prev = ema50[ema50.length-6]; // 5 hours ago
+    // Trend = price vs ema50 AND ema50 direction
+    const aboveEma = cp > v50;
+    const emaRising = v50 > v50_prev;
+    let trend;
+    if(aboveEma && emaRising) trend = 'up';
+    else if(!aboveEma && !emaRising) trend = 'down';
+    else trend = 'sideways';
+    const r = {trend, cp, ema50:v50, ts:now};
+    h1TrendCache[symbol] = r;
+    return r;
+  }catch(_){
+    const r = {trend:'unknown', ts:now};
+    h1TrendCache[symbol] = r;
+    return r;
+  }
+}
+
+// Prime hours per asset class — UTC windows where the asset is most active
+const PRIME_HOURS = {
+  crypto: {primeStart:13, primeEnd:21, goodStart:7, goodEnd:24}, // 24/7 but best London/NY
+  gold: {primeStart:8, primeEnd:17, goodStart:1, goodEnd:21},
+  silver: {primeStart:13, primeEnd:17, goodStart:8, goodEnd:21},
+  pgm: {primeStart:13, primeEnd:18, goodStart:8, goodEnd:21},
+  energy: {primeStart:13, primeEnd:18, goodStart:7, goodEnd:21},
+  base: {primeStart:8, primeEnd:17, goodStart:1, goodEnd:18}
+};
+
+function checkPrimeHours(category){
+  const cfg = PRIME_HOURS[category];
+  if(!cfg) return true; // unknown category, allow
+  const utcHour = new Date().getUTCHours() + new Date().getUTCMinutes()/60;
+  const inWindow = (s,e) => s<=e ? (utcHour>=s && utcHour<e) : (utcHour>=s || utcHour<e);
+  // Allow trading during 'good' window (more permissive than prime)
+  return inWindow(cfg.goodStart, cfg.goodEnd);
+}
+
+function updateQualityChips(g){
+  const set = (id, pass) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.className = 'qgate-chip ' + (pass ? 'pass' : 'fail');
+  };
+  set('qg-strong', g.isStrongSig);
+  set('qg-rr', g.goodRR);
+  set('qg-conf', g.highConf);
+  set('qg-agree', g.strongAgreement);
+  set('qg-trend', g.trendAligned);
+  set('qg-hours', g.hoursOK);
+  
+  const passes = [g.isStrongSig, g.goodRR, g.highConf, g.strongAgreement, g.trendAligned, g.hoursOK].filter(x=>x).length;
+  const sumEl = document.getElementById('qgateSummary');
+  sumEl.textContent = passes + '/6';
+  sumEl.className = 'qgate-summary ' + (passes===6 ? 'pass' : passes>=4 ? 'partial' : 'fail');
+  
+  // Show H1 trend value in trend chip tooltip
+  if(g.trendCheck && g.trendCheck.trend){
+    document.getElementById('qg-trend').title = 'H1 trend: ' + g.trendCheck.trend.toUpperCase();
+  }
+}
+
 async function fetchData(){
   try{
     const pi=ASSET_CATEGORIES[currentCategory].pairs.find(p=>p.sym===pair);
@@ -656,22 +768,42 @@ async function fetchData(){
       const sp=r.cp*EXCHANGES[currentExchange].spread;
       const e1=fmt(isBull?r.cp-r.atr*0.3+sp:r.cp-r.atr*0.3-sp);
       const e2=fmt(isBull?r.cp+r.atr*0.3+sp:r.cp+r.atr*0.3-sp);
-      const slDist=r.atr*TF_SETTINGS[currentTF].atrMult,tp1=r.atr*1.5,tp2=r.atr*3;
+      const slDist=r.atr*TF_SETTINGS[currentTF].atrMult,tp1=slDist*2.5,tp2=slDist*4;
       document.getElementById('td-dir').textContent=isBull?'↑ BUY (Long)':'↓ SELL (Short)';
       document.getElementById('td-dir').className='trade-val '+r.mainCls;
       document.getElementById('td-entry').textContent=e1+' – '+e2;
       document.getElementById('td-tp1-scalp').textContent=fmt(isBull?r.cp+tp1:r.cp-tp1)+' (+'+(tp1/r.cp*100).toFixed(2)+'%)';
       document.getElementById('td-tp2-scalp').textContent=fmt(isBull?r.cp+tp2:r.cp-tp2)+' (+'+(tp2/r.cp*100).toFixed(2)+'%)';
       document.getElementById('td-sl').textContent=fmt(isBull?r.cp-slDist:r.cp+slDist)+' (-'+(slDist/r.cp*100).toFixed(2)+'%)';
-      // Quality gates for paper trading (scalp mode)
+      // ═══════════════════════════════════════════════════════════
+      // QUALITY GATES A+B (added to lift win rate)
+      // A: Higher quality bar (80%+ conf, 7/9 agree, prime hours)
+      // B: H1 trend filter (no counter-trend trades)
+      // ═══════════════════════════════════════════════════════════
       const isStrongSig = r.mainSig==='STRONG BUY' || r.mainSig==='STRONG SELL';
       const actualRR = tp1/slDist;
       const goodRR = actualRR >= 1.5;
-      const canPaperTrade = isStrongSig && goodRR;
+      const highConf = r.confPct >= 80;
+      const strongAgreement = (r.bullC >= 7) || (r.bearC >= 7);
       
+      // Hours check — uses TRADING_WINDOWS data if available
+      const hoursOK = checkPrimeHours(currentCategory);
+      
+      // H1 trend filter (async — uses cache)
+      const trendCheck = await getH1TrendCached(pair, pi && pi.futures===true);
+      const trendAligned = (r.mainCls==='bull' && trendCheck.trend==='up') ||
+                           (r.mainCls==='bear' && trendCheck.trend==='down');
+      
+      const canPaperTrade = isStrongSig && goodRR && highConf && strongAgreement && hoursOK && trendAligned;
+      
+      // Build prioritised block reason (most important first)
       let blockReason = '';
-      if(!isStrongSig) blockReason = '⚠️ Signal too weak — need STRONG BUY/SELL';
+      if(!isStrongSig) blockReason = '⚠️ Need STRONG BUY/SELL signal';
       else if(!goodRR) blockReason = `⚠️ R:R 1:${actualRR.toFixed(2)} too low — need 1:1.5+`;
+      else if(!highConf) blockReason = `⚠️ Confidence ${r.confPct}% — need 80%+`;
+      else if(!strongAgreement) blockReason = `⚠️ Only ${Math.max(r.bullC,r.bearC)}/9 agree — need 7+`;
+      else if(!trendAligned) blockReason = `⚠️ H1 trend is ${trendCheck.trend.toUpperCase()} — don't fight it`;
+      else if(!hoursOK) blockReason = `⚠️ Outside prime hours for ${currentCategory.toUpperCase()}`;
       
       document.getElementById('td-rr').textContent='1 : '+actualRR.toFixed(2) + (goodRR?' ✓':' ✗');
       document.getElementById('td-rr').className='trade-val ' + (goodRR?'tp':'sl');
@@ -685,6 +817,11 @@ async function fetchData(){
       if(!canPaperTrade && (r.mainCls==='bull'||r.mainCls==='bear')){
         document.getElementById('sigSub').textContent = r.mainSub + ' · ' + blockReason;
       }
+      // Store last evaluation for openPaperTrade defense-in-depth
+      lastQualityEval = {canPaperTrade, isStrongSig, goodRR, highConf, strongAgreement, hoursOK, trendAligned, blockReason};
+      
+      // Update quality gate chips display
+      updateQualityChips({isStrongSig, goodRR, highConf, strongAgreement, trendAligned, hoursOK, trendCheck});
     } else {
       document.getElementById('btnPaperLong').disabled=true;
       document.getElementById('btnPaperShort').disabled=true;
@@ -851,13 +988,16 @@ function openPaperTrade(direction){
   if(!currentATR||!currentPrice||!currentTfsCfg){addLog('ERROR','Need active signal');return;}
   if(direction==='long'&&currentSignalCls!=='bull'){addLog('ERROR','Need BULL signal for LONG');return;}
   if(direction==='short'&&currentSignalCls!=='bear'){addLog('ERROR','Need BEAR signal for SHORT');return;}
-  // QUALITY GATES (added after losing-trade analysis)
+  // QUALITY GATES A+B (defense in depth — last eval from fetchData)
   if(currentMainSig!=='STRONG BUY' && currentMainSig!=='STRONG SELL'){
     addLog('ERROR','⚠️ Only STRONG signals allowed for paper trades');return;
   }
+  if(lastQualityEval && !lastQualityEval.canPaperTrade){
+    addLog('ERROR', lastQualityEval.blockReason || '⚠️ Quality gate blocked');return;
+  }
   const isBull=direction==='long';
   const slDist=currentATR*currentTfsCfg.atrMult;
-  const tp1Dist=currentATR*1.5,tp2Dist=currentATR*3;
+  const tp1Dist=slDist*2.5,tp2Dist=slDist*4;
   const actualRR=tp1Dist/slDist;
   if(actualRR<1.5){
     addLog('ERROR',`⚠️ R:R 1:${actualRR.toFixed(2)} below minimum 1:1.5 — skipped`);return;
