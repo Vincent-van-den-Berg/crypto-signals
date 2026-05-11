@@ -115,7 +115,8 @@ select{background:var(--surface2);border:2px solid var(--border2);color:var(--te
 .paper-trade-btn{flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;border:2px solid;font-family:'Inter',sans-serif}
 .paper-trade-btn.long{background:var(--bull);color:#fff;border-color:var(--bull)}
 .paper-trade-btn.short{background:var(--bear);color:#fff;border-color:var(--bear)}
-.paper-trade-btn:disabled{opacity:.4;cursor:not-allowed}
+.paper-trade-btn:disabled{opacity:.4;cursor:not-allowed;background:#cbd5e1!important;border-color:#94a3b8!important;color:#475569!important}
+.paper-trade-btn:disabled::after{content:" 🚫"}
 .conf-wrap{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
 .conf-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .conf-title{font-size:12px;font-weight:700;color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
@@ -478,7 +479,7 @@ function nb(d){return d.map(c=>({o:+c[1],h:+c[2],l:+c[3],c:+c[4],v:+c[5]}));}
 let currentExchange='binance',currentCategory='crypto',pair='XRPUSDT',currentTF='5m';
 let lastSig='',countdown=15,cdTimer,scanTimer,scanInProgress=false;
 let scannerOn=true,alertHistory={};
-let currentPrice=0,currentSignalCls='neutral',currentATR=0,currentTfsCfg=null,lastAlertedPair=null;
+let currentPrice=0,currentSignalCls='neutral',currentATR=0,currentTfsCfg=null,lastAlertedPair=null,currentMainSig='NEUTRAL';
 let lastScanTime=Date.now();
 
 let paperBalance=1000,paperTrades=[];
@@ -628,7 +629,7 @@ async function fetchData(){
     const pi=ASSET_CATEGORIES[currentCategory].pairs.find(p=>p.sym===pair);
     const uF=pi&&pi.futures===true;
     const r=await analysePairTF(pair,currentTF,uF);
-    currentPrice=r.cp;currentSignalCls=r.mainCls;currentATR=r.atr;currentTfsCfg=TF_SETTINGS[currentTF];
+    currentPrice=r.cp;currentSignalCls=r.mainCls;currentATR=r.atr;currentTfsCfg=TF_SETTINGS[currentTF];currentMainSig=r.mainSig;
     document.getElementById('sourceInfo').textContent=EXCHANGES[currentExchange].name+' · '+pair+' · '+currentTF.toUpperCase();
     r.signals.forEach(s=>setCard(s.id,s.val,s.sig,s.cls));
     document.getElementById('sigBanner').className='sig-banner '+r.mainCls;
@@ -662,14 +663,35 @@ async function fetchData(){
       document.getElementById('td-tp1-scalp').textContent=fmt(isBull?r.cp+tp1:r.cp-tp1)+' (+'+(tp1/r.cp*100).toFixed(2)+'%)';
       document.getElementById('td-tp2-scalp').textContent=fmt(isBull?r.cp+tp2:r.cp-tp2)+' (+'+(tp2/r.cp*100).toFixed(2)+'%)';
       document.getElementById('td-sl').textContent=fmt(isBull?r.cp-slDist:r.cp+slDist)+' (-'+(slDist/r.cp*100).toFixed(2)+'%)';
-      document.getElementById('td-rr').textContent='1 : '+(tp1/slDist).toFixed(2);
+      // Quality gates for paper trading (scalp mode)
+      const isStrongSig = r.mainSig==='STRONG BUY' || r.mainSig==='STRONG SELL';
+      const actualRR = tp1/slDist;
+      const goodRR = actualRR >= 1.5;
+      const canPaperTrade = isStrongSig && goodRR;
+      
+      let blockReason = '';
+      if(!isStrongSig) blockReason = '⚠️ Signal too weak — need STRONG BUY/SELL';
+      else if(!goodRR) blockReason = `⚠️ R:R 1:${actualRR.toFixed(2)} too low — need 1:1.5+`;
+      
+      document.getElementById('td-rr').textContent='1 : '+actualRR.toFixed(2) + (goodRR?' ✓':' ✗');
+      document.getElementById('td-rr').className='trade-val ' + (goodRR?'tp':'sl');
+      
+      document.getElementById('btnPaperLong').disabled = !canPaperTrade || r.mainCls!=='bull';
+      document.getElementById('btnPaperShort').disabled = !canPaperTrade || r.mainCls!=='bear';
+      document.getElementById('btnPaperLong').title = canPaperTrade ? 'Open paper LONG trade' : blockReason;
+      document.getElementById('btnPaperShort').title = canPaperTrade ? 'Open paper SHORT trade' : blockReason;
+      
+      // Visual hint
+      if(!canPaperTrade && (r.mainCls==='bull'||r.mainCls==='bear')){
+        document.getElementById('sigSub').textContent = r.mainSub + ' · ' + blockReason;
+      }
     } else {
+      document.getElementById('btnPaperLong').disabled=true;
+      document.getElementById('btnPaperShort').disabled=true;
       tb.className='trade-box';badge.className='trade-badge neutral';badge.textContent='WAIT';
       document.getElementById('td-dir').textContent='No clear direction';
       ['td-entry','td-tp1-scalp','td-tp2-scalp','td-sl','td-rr'].forEach(id=>document.getElementById(id).textContent='---');
     }
-    document.getElementById('btnPaperLong').disabled=r.mainCls!=='bull';
-    document.getElementById('btnPaperShort').disabled=r.mainCls!=='bear';
     drawPriceChart(r.closes.slice(-80),r.eF.slice(-80),r.eM.slice(-80),r.eS.slice(-80),r.bb.slice(-80),r.vwap.slice(-80));
     if(r.mainSig!==lastSig&&r.mainSig!=='NEUTRAL'){addLog(r.mainCls==='bull'?'BUY':'SELL',pair+' '+r.mainSig+' — '+r.confPct+'%');lastSig=r.mainSig;}
     updateOpenTrades();
@@ -829,9 +851,17 @@ function openPaperTrade(direction){
   if(!currentATR||!currentPrice||!currentTfsCfg){addLog('ERROR','Need active signal');return;}
   if(direction==='long'&&currentSignalCls!=='bull'){addLog('ERROR','Need BULL signal for LONG');return;}
   if(direction==='short'&&currentSignalCls!=='bear'){addLog('ERROR','Need BEAR signal for SHORT');return;}
+  // QUALITY GATES (added after losing-trade analysis)
+  if(currentMainSig!=='STRONG BUY' && currentMainSig!=='STRONG SELL'){
+    addLog('ERROR','⚠️ Only STRONG signals allowed for paper trades');return;
+  }
   const isBull=direction==='long';
   const slDist=currentATR*currentTfsCfg.atrMult;
   const tp1Dist=currentATR*1.5,tp2Dist=currentATR*3;
+  const actualRR=tp1Dist/slDist;
+  if(actualRR<1.5){
+    addLog('ERROR',`⚠️ R:R 1:${actualRR.toFixed(2)} below minimum 1:1.5 — skipped`);return;
+  }
   const sl=isBull?currentPrice-slDist:currentPrice+slDist;
   const tp1=isBull?currentPrice+tp1Dist:currentPrice-tp1Dist;
   const tp2=isBull?currentPrice+tp2Dist:currentPrice-tp2Dist;
