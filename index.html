@@ -50,6 +50,8 @@ header{background:#0f1923;padding:12px 16px;display:flex;align-items:center;just
 .scan-pair{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);font-family:'JetBrains Mono',monospace;cursor:pointer}
 .scan-pair.bull{background:rgba(0,230,118,.3);border-color:#4ade80;color:#bbf7d0}
 .scan-pair.bear{background:rgba(255,61,90,.3);border-color:#fca5a5;color:#fecaca}
+.scan-pair.watch{opacity:.55;background:rgba(255,255,255,.08);border-style:dashed}
+.scan-pair.watch:hover{opacity:.85}
 .scan-empty{color:rgba(255,255,255,.7);font-size:12px;font-weight:600;font-style:italic}
 .scan-controls{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
 .scan-toggle{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;letter-spacing:.5px}
@@ -190,11 +192,12 @@ select{background:var(--surface2);border:2px solid var(--border2);color:var(--te
 .trade-val.sl{color:var(--bear)}
 .trade-val.rr{color:var(--neutral)}
 .trade-val.nd{color:var(--dim)}
-.chart-wrap{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
-.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.chart-title{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.8px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
-.chart-val{font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace}
-canvas{display:block;width:100%;border-radius:6px}
+.chart-wrap{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:8px 10px;box-shadow:var(--shadow)}
+.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.chart-title{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.8px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.chart-val{font-size:12px;font-weight:800;font-family:'JetBrains Mono',monospace}
+canvas{display:block;width:100%;height:120px;border-radius:6px}
+#priceChart{height:140px}
 .trades-list{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:12px 14px;max-height:340px;overflow-y:auto;box-shadow:var(--shadow)}
 .trades-title{font-size:11px;font-weight:700;color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:8px;display:flex;justify-content:space-between}
 .trade-item{padding:9px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px}
@@ -337,10 +340,8 @@ canvas{display:block;width:100%;border-radius:6px}
   <div class="section-label">Select Your Exchange</div>
   <div class="exchange-tabs">
     <button class="ex-btn active" onclick="setExchange('binance',this)">BINANCE</button>
-    <button class="ex-btn" onclick="setExchange('binanceus',this)">BINANCE.US</button>
     <button class="ex-btn" onclick="setExchange('bybit',this)">BYBIT</button>
-    <button class="ex-btn" onclick="setExchange('okx',this)">OKX</button>
-    <button class="ex-btn" onclick="setExchange('kucoin',this)">KUCOIN</button>
+    <button class="ex-btn" onclick="setExchange('tigertrade',this)">🐯 TIGER TRADE</button>
     <button class="ex-btn partial" onclick="setExchange('xm',this)">XM / X LITE ⚠️</button>
   </div>
 </div>
@@ -538,10 +539,8 @@ async function binanceFetch(sym,tf,uF){
 }
 const EXCHANGES={
   binance:{name:'Binance',spread:0,fetchKlines:(s,t,uF)=>binanceFetch(s,t,uF)},
-  binanceus:{name:'Binance.US',spread:0.001,fetchKlines:async(s,t,uF)=>{if(uF)return binanceFetch(s,t,true);try{const r=await fetch(`https://api.binance.us/api/v3/klines?symbol=${s}&interval=${t}&limit=200`);if(r.ok){const d=await r.json();if(d.length>50)return nb(d);}}catch(_){}return binanceFetch(s,t,false);}},
   bybit:{name:'Bybit',spread:0.001,fetchKlines:(s,t,uF)=>binanceFetch(s,t,uF)},
-  okx:{name:'OKX',spread:0.001,fetchKlines:(s,t,uF)=>binanceFetch(s,t,uF)},
-  kucoin:{name:'KuCoin',spread:0.001,fetchKlines:(s,t,uF)=>binanceFetch(s,t,uF)},
+  tigertrade:{name:'Tiger Trade',spread:0.0008,fetchKlines:(s,t,uF)=>binanceFetch(s,t,uF)},
   xm:{name:'XM / X Lite',spread:0.003,fetchKlines:(s,t,uF)=>binanceFetch(s,t,uF)}
 };
 function nb(d){return d.map(c=>({o:+c[1],h:+c[2],l:+c[3],c:+c[4],v:+c[5]}));}
@@ -987,9 +986,10 @@ async function fetchData(){
 
 function drawPriceChart(c,e1,e2,e3,bbData,vwap){
   const cv=document.getElementById('priceChart');const dpr=window.devicePixelRatio||1;
-  cv.width=cv.offsetWidth*dpr;cv.height=150*dpr;
+  const displayW=cv.offsetWidth, displayH=cv.offsetHeight||140;
+  cv.width=displayW*dpr;cv.height=displayH*dpr;
   const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
-  const W=cv.offsetWidth,H=150,P={t:6,b:16,l:6,r:6},cW=W-P.l-P.r,cH=H-P.t-P.b;
+  const W=displayW,H=displayH,P={t:6,b:14,l:6,r:6},cW=W-P.l-P.r,cH=H-P.t-P.b;
   const vBB=bbData.filter(b=>b.upper),off=c.length-vBB.length;
   const all=[...c,...e1,...e2,...e3,...vBB.map(b=>b.upper),...vBB.map(b=>b.lower),...vwap];
   const mn=Math.min(...all)*.9995,mx=Math.max(...all)*1.0005,rng=mx-mn||1;
@@ -1037,8 +1037,28 @@ async function runScanner(){
     if(nValid===0)continue;
     const agreedDir=bullCount>=ALERT_TF_THRESHOLD?'bull':bearCount>=ALERT_TF_THRESHOLD?'bear':null;
     const avgConf=nValid>0?Math.abs(totalConf)/nValid:0;
-    results.push({...pInfo,bullCount,bearCount,avgConf:Math.round(avgConf),agreedDir,tfResults});
+    
+    // ── QUALITY GATE CHECK (matches paper trade gates) ──
+    let qualityPass = false;
+    let blockReason = '';
     if(agreedDir){
+      const category = Object.keys(ASSET_CATEGORIES).find(c =>
+        ASSET_CATEGORIES[c].pairs.some(p => p.sym === pInfo.sym));
+      const hoursOK = checkPrimeHours(category);
+      const confOK = avgConf >= 80;
+      const trendCheck = await getH1TrendCached(pInfo.sym, pInfo.futures);
+      const trendAligned = (agreedDir==='bull' && trendCheck.trend==='up') ||
+                           (agreedDir==='bear' && trendCheck.trend==='down');
+      qualityPass = hoursOK && confOK && trendAligned;
+      if(!hoursOK) blockReason = 'outside prime hours';
+      else if(!confOK) blockReason = `conf ${Math.round(avgConf)}% <80%`;
+      else if(!trendAligned) blockReason = `H1 trend ${trendCheck.trend}`;
+    }
+    
+    results.push({...pInfo,bullCount,bearCount,avgConf:Math.round(avgConf),agreedDir,tfResults,qualityPass,blockReason});
+    
+    // Only ALERT on quality setups, not just any 3+TF agreement
+    if(agreedDir && qualityPass){
       const now=Date.now();
       const last=alertHistory[pInfo.sym]||0;
       if(now-last>=ALERT_COOLDOWN_MS){
@@ -1051,6 +1071,8 @@ async function runScanner(){
   const rEl=document.getElementById('scanResults');
   rEl.innerHTML='';
   results.sort((a,b)=>{
+    // Sort: quality-pass first, then by confidence
+    if(a.qualityPass !== b.qualityPass) return b.qualityPass - a.qualityPass;
     const aS=a.agreedDir?1:0,bS=b.agreedDir?1:0;
     if(aS!==bS)return bS-aS;
     return b.avgConf-a.avgConf;
@@ -1061,19 +1083,36 @@ async function runScanner(){
   } else {
     strongOnes.forEach(r=>{
       const chip=document.createElement('button');
-      chip.className='scan-pair '+r.agreedDir;
-      chip.innerHTML=(r.agreedDir==='bull'?'↑':'↓')+' '+r.sym.replace('USDT','')+' <span style="opacity:.7">'+r.avgConf+'%</span>';
+      // Tradeable = solid colour; blocked = dimmed/outlined with watch icon
+      const tradeable = r.qualityPass;
+      chip.className='scan-pair '+r.agreedDir + (tradeable ? '' : ' watch');
+      const arrow = r.agreedDir==='bull'?'↑':'↓';
+      const icon = tradeable ? '🎯' : '👁️';
+      chip.innerHTML=icon+' '+arrow+' '+r.sym.replace('USDT','')+' <span style="opacity:.7">'+r.avgConf+'%</span>';
+      chip.title = tradeable ? 'Quality setup — meets all gates' : `Watch only — blocked: ${r.blockReason}`;
       chip.onclick=()=>jumpToPair(r);
       rEl.appendChild(chip);
     });
   }
-  document.getElementById('scanStatus').textContent='Last scan: '+new Date().toTimeString().slice(0,5)+' · '+strongOnes.length+' alerts';
+  const tradeable = strongOnes.filter(r=>r.qualityPass).length;
+  const watching = strongOnes.length - tradeable;
+  document.getElementById('scanStatus').textContent=`Last scan: ${new Date().toTimeString().slice(0,5)} · ${tradeable} tradeable, ${watching} watch`;
   scanInProgress=false;
 
   if(findings.length>0){
     showAlertPopup(findings[0]);
-    findings.slice(1).forEach(f=>addLog(f.direction==='bull'?'BUY':'SELL',f.sym+' STRONG '+f.direction.toUpperCase()+' on '+(f.bullCount+f.bearCount)+' TFs ('+f.avgConf+'%)'));
+    findings.slice(1).forEach(f=>addLog(f.direction==='bull'?'BUY':'SELL','🎯 '+f.sym+' QUALITY '+f.direction.toUpperCase()+' on '+(f.bullCount+f.bearCount)+' TFs ('+f.avgConf+'%)'));
   }
+  // Log watch-only setups quietly
+  results.filter(r=>r.agreedDir && !r.qualityPass).forEach(r=>{
+    // Only log once per cooldown for watch-only items too
+    const watchKey='watch-'+r.sym;
+    const last=alertHistory[watchKey]||0;
+    if(Date.now()-last>=ALERT_COOLDOWN_MS){
+      addLog('SCAN','👁️ '+r.sym+' '+r.agreedDir.toUpperCase()+' watch only — '+r.blockReason);
+      alertHistory[watchKey]=Date.now();
+    }
+  });
 }
 
 function jumpToPair(r){
@@ -1256,7 +1295,14 @@ function addLog(type,msg){
 function setExchange(ex,btn){
   currentExchange=ex;
   document.querySelectorAll('.ex-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  addLog('ALERT','Exchange: '+EXCHANGES[ex].name);lastSig='';fetchData();
+  const cfg=EXCHANGES[ex];
+  addLog('ALERT','Exchange: '+cfg.name);
+  if(ex==='tigertrade'){
+    addLog('ALERT','🐯 Tiger Trade routes orders via Binance/Bybit — prices identical, fees discounted');
+  } else if(ex==='xm'){
+    addLog('ALERT','⚠️ XM is a CFD broker — wider spreads, signals use Binance reference data');
+  }
+  lastSig='';fetchData();
 }
 
 function setCategory(cat,btn){
